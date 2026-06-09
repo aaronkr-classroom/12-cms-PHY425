@@ -1,8 +1,8 @@
 <?php
 declare(strict_types = 1); // 엄격한 타입 사용
 http_response_code(404);
-require 'includes/database-connection.php'; // PDO 객체
-require 'includes/functions.php';
+require_once 'includes/database-connection.php'; // PDO 객체
+require_once 'includes/functions.php';
 
 $sql = "SELECT id, name FROM category WHERE navigation = 1;"; 
 $navigation = pdo($pdo, $sql)->fetchAll();

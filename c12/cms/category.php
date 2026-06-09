@@ -1,8 +1,8 @@
 <?php
 // 슬라이드 50
 declare(strict_types = 1); // 엄격한 타입 사용
-require 'includes/database-connection.php'; // PDO 객체
-require 'includes/functions.php';
+require_once 'includes/database-connection.php'; // PDO 객체
+require_once 'includes/functions.php';
 
 // ----------
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT); // 아이디 유효성 확인

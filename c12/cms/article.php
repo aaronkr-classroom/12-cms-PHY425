@@ -1,8 +1,8 @@
 <?php
 // 슬라이드 53
 declare(strict_types = 1); // 엄격한 타입 사용
-require 'includes/database-connection.php'; // PDO 객체
-require 'includes/functions.php';
+require_once 'includes/database-connection.php'; // PDO 객체
+require_once 'includes/functions.php';
 
 // ----------
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT); // 아이디 유효성 확인
@@ -20,30 +20,32 @@ $sql = "SELECT a.title, a.summary, a.content, a.created, a.category_id, a.member
           JOIN category  AS c ON a.category_id  = c.id
           JOIN member    AS m ON a.member_id    = m.id
          LEFT JOIN image AS i ON a.image_id     = i.id
-        WHERE a.category_id = :id AND a.published = 1
-        ORDER BY a.id DESC;"; // 최근 기사 가져오는 SQL
-$articles = pdo($pdo, $sql, [$id])->fetchAll(); // 기사 6개 불러오기
+        WHERE a.id = :id AND a.published = 1;"; // 최근 기사 가져오는 SQL
+$article = $article = pdo($pdo, $sql, [$id])->fetch(); // 기사 6개 불러오기
+if (!$article) {
+  include 'page-not-found.php';
+}
 
 $sql = "SELECT id, name FROM category WHERE navigation = 1;";
 $navigation = pdo($pdo, $sql)->fetchAll();
 
-$section    = $category['id'];
-$title      = $category['name']; // HTML <title> tag
-$description= $category['description']; // 메타 description
+$section    = $article['category_id'];
+$title      = $article['title']; // HTML <title> tag
+$description= $article['summary']; // 메타 description
 ?>
 <?php include 'includes/header.php'; ?>
   <main class="article container" id="content">
     <section class="image">
-      <img src="uploads/<?= // @TODO ?>" 
-           alt="<?= // @TODO ?>">
+      <img src="uploads/<?= html_escape($article['image_file'] ?? 'blank.png') ?>" 
+           alt="<?= html_escape($article['image_alt']) ?>">
     </section>
     <section class="text">
-      <h1><?= // @TODO ?></h1>
-      <div class="date"><?= // @TODO ?></div>
-      <div class="content"><?= // @TODO ?></div>
+      <h1><?= html_escape($article['title']) ?></h1>
+      <div class="date"><?= format_date($article['created']) ?></div>
+      <div class="content"><?= html_escape($article['content']) ?></div>
       <p class="credit">
-        Posted in <a href="category.php?id=<?= $article['category_id'] ?>"><?= // @TODO ?></a> by <a href="member.php?id=<?= $article['member_id'] ?>">
-          <?= // @TODO ?></a>
+        Posted in <a href="category.php?id=<?= $article['category_id'] ?>"><?= html_escape($article['category']) ?></a> by <a href="member.php?id=<?= $article['member_id'] ?>">
+          <?= html_escape($article['author']) ?></a>
       </p>
     </section>
   </main>
